@@ -1,10 +1,12 @@
 @font-face {
   font-family: 'LexFlow Web Serif'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url('./fonts/LexFlowWebSerif-Regular.otf') format('opentype');
+  src: url('./fonts/LexFlowWebSerif-Regular.woff2') format('woff2'),
+       url('./fonts/LexFlowWebSerif-Regular.otf') format('opentype');
 }
 @font-face {
   font-family: 'LexFlow Web Serif'; font-style: normal; font-weight: 600; font-display: swap;
-  src: url('./fonts/LexFlowWebSerif-SemiBold.otf') format('opentype');
+  src: url('./fonts/LexFlowWebSerif-SemiBold.woff2') format('woff2'),
+       url('./fonts/LexFlowWebSerif-SemiBold.otf') format('opentype');
 }
 :root {
   --paper: #faf9f6; --ink: #29261f; --muted: #787166; --line: #e5e0d7;
@@ -60,6 +62,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .title-particles-ready .flow-word path { animation: none; stroke-dashoffset: 0; }
 .motion-paused .title-particles { opacity: 1; }
 .particle-scene { position: relative; min-width: 0; width: 100%; aspect-ratio: 1; max-height: 460px; isolation: isolate; background: var(--paper); }
+.particle-scene picture { position: absolute; inset: 0; display: block; }
 .particle-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transition: opacity .25s; }
 #beaver-canvas { display: block; width: 100%; height: 100%; position: absolute; inset: 0; opacity: 0; transition: opacity .4s; touch-action: pan-y; cursor: crosshair; border-radius: 20px; }
 .particles-ready #beaver-canvas { opacity: 1; }

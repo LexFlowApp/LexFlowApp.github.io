@@ -214,7 +214,13 @@ function mountTitleParticles() {
 
   async function initialize() {
     if (reduced.matches) { release(); return; }
-    try { await document.fonts?.ready; } catch { /* sampling still works with the fallback face */ }
+    // 字体加载可能较慢；超时后先用当前可用的字体取样，避免标题长时间空白。
+    try {
+      await Promise.race([
+        document.fonts?.ready,
+        new Promise(resolve => setTimeout(resolve, 5000)),
+      ]);
+    } catch { /* sampling still works with the fallback face */ }
     if (reduced.matches) return;
     if (!canvas) {
       canvas = document.createElement('canvas');

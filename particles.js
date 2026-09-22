@@ -192,7 +192,20 @@ function mountParticles() {
 
   async function initialize() {
     try {
-      await fallback.decode();
+      // decode() 会一直等到图片加载完成；网络较慢时不能让粒子无限期空白，
+      // 因此加一个超时兜底，超时后按图片当时的可用状态继续取样。
+      await Promise.race([
+        fallback.decode().catch(() => {}),
+        new Promise(resolve => setTimeout(resolve, 6000)),
+      ]);
+      if (!fallback.naturalWidth) {
+        await new Promise(resolve => {
+          if (fallback.complete && fallback.naturalWidth) { resolve(); return; }
+          fallback.addEventListener('load', resolve, { once: true });
+          fallback.addEventListener('error', resolve, { once: true });
+          setTimeout(resolve, 15000);
+        });
+      }
       const source = document.createElement('canvas');
       source.width = source.height = 384;
       const sourceContext = source.getContext('2d', { willReadFrequently: true });
@@ -215,8 +228,9 @@ function mountParticles() {
       if (typeof ResizeObserver === 'function') new ResizeObserver(resize).observe(scene);
       else window.addEventListener('resize', resize);
       syncAnimation();
-    } catch {
+    } catch (error) {
       // Keep the original illustration visible if canvas or image loading fails.
+      console.warn('LexFlow: 河狸粒子初始化失败，保留静态图标。', error);
       ready = false;
       cancelAnimationFrame(frame);
       scene.classList.remove('particles-ready');
