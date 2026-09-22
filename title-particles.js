@@ -214,11 +214,12 @@ function mountTitleParticles() {
 
   async function initialize() {
     if (reduced.matches) { release(); return; }
-    // 字体加载可能较慢；超时后先用当前可用的字体取样，避免标题长时间空白。
+    // 标题全部是拉丁字符，只等所需的那一份字体即可，
+    // 避免被体积更大的中文字体拖慢；超时后先用当前可用字体取样。
     try {
       await Promise.race([
-        document.fonts?.ready,
-        new Promise(resolve => setTimeout(resolve, 5000)),
+        document.fonts?.load('400 100px "LexFlow Web Serif"', 'Everything is Workflow.'),
+        new Promise(resolve => setTimeout(resolve, 4000)),
       ]);
     } catch { /* sampling still works with the fallback face */ }
     if (reduced.matches) return;

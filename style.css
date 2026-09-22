@@ -1,12 +1,24 @@
+/* 字体按字符范围拆分：标题等拉丁文字只需下载约 25 KB 的小字体，
+   中文部分单独下载，浏览器按 unicode-range 自动按需加载。 */
 @font-face {
   font-family: 'LexFlow Web Serif'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url('./fonts/LexFlowWebSerif-Regular.woff2') format('woff2'),
-       url('./fonts/LexFlowWebSerif-Regular.otf') format('opentype');
+  src: url('./fonts/LexFlowWebSerif-Regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-2FFF, U+3008-300F, U+3010-3011, U+3014-301B, U+FF01-FF5E, U+FFE0-FFE5;
+}
+@font-face {
+  font-family: 'LexFlow Web Serif'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url('./fonts/LexFlowWebSerif-Regular-cjk.woff2') format('woff2');
+  unicode-range: U+3000-3007, U+3012-3013, U+301C-301F, U+3020-303F, U+3400-4DBF, U+4E00-9FFF, U+FE30-FE4F;
 }
 @font-face {
   font-family: 'LexFlow Web Serif'; font-style: normal; font-weight: 600; font-display: swap;
-  src: url('./fonts/LexFlowWebSerif-SemiBold.woff2') format('woff2'),
-       url('./fonts/LexFlowWebSerif-SemiBold.otf') format('opentype');
+  src: url('./fonts/LexFlowWebSerif-SemiBold-latin.woff2') format('woff2');
+  unicode-range: U+0000-2FFF, U+3008-300F, U+3010-3011, U+3014-301B, U+FF01-FF5E, U+FFE0-FFE5;
+}
+@font-face {
+  font-family: 'LexFlow Web Serif'; font-style: normal; font-weight: 600; font-display: swap;
+  src: url('./fonts/LexFlowWebSerif-SemiBold-cjk.woff2') format('woff2');
+  unicode-range: U+3000-3007, U+3012-3013, U+301C-301F, U+3020-303F, U+3400-4DBF, U+4E00-9FFF, U+FE30-FE4F;
 }
 :root {
   --paper: #faf9f6; --ink: #29261f; --muted: #787166; --line: #e5e0d7;
