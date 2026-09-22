@@ -1,0 +1,1 @@
+LexFlow Web Serif is a character subset of the Source Han Serif SC fonts bundled with LexFlow. Glyph outlines are unchanged. The derived font family was renamed to comply with the reserved-name requirement. Original copyright and SIL Open Font License are provided in LICENSE.txt.
