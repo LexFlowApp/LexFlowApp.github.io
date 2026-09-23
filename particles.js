@@ -190,26 +190,49 @@ function mountParticles() {
     }).observe(scene);
   }
 
+  // 弱网下首张图片可能因连接失败而卡住；用带缓存穿透的重试兜底，
+  // 同时提供 WebP 失败后自动切 PNG 的路径，确保河狸始终能成形。
+  function loadArtwork() {
+    const sources = [
+      { src: './beaver-refined.webp', cache: '' },
+      { src: './beaver-refined.png', cache: '' },
+      { src: './beaver-refined.png', cache: '?retry=' + Date.now() },
+    ];
+    return new Promise(resolve => {
+      let attempt = 0;
+      const started = Date.now();
+      const tryLoad = () => {
+        const current = sources[Math.min(attempt, sources.length - 1)];
+        const url = current.src + current.cache;
+        const probe = new Image();
+        const giveUp = setTimeout(() => { probe.src = ''; next(); }, 12000);
+        probe.onload = () => {
+          clearTimeout(giveUp);
+          if (fallback.src !== url) fallback.src = url;
+          resolve(probe);
+        };
+        probe.onerror = () => { clearTimeout(giveUp); next(); };
+        probe.src = url;
+      };
+      const next = () => {
+        attempt += 1;
+        // 总时长超过 45 秒时停止重试，让静态图标兜底。
+        if (attempt >= sources.length || Date.now() - started > 45000) { resolve(); return; }
+        tryLoad();
+      };
+      if (fallback.complete && fallback.naturalWidth) { resolve(); return; }
+      tryLoad();
+    });
+  }
+
   async function initialize() {
     try {
-      // decode() 会一直等到图片加载完成；网络较慢时不能让粒子无限期空白，
-      // 因此加一个超时兜底，超时后按图片当时的可用状态继续取样。
-      await Promise.race([
-        fallback.decode().catch(() => {}),
-        new Promise(resolve => setTimeout(resolve, 6000)),
-      ]);
-      if (!fallback.naturalWidth) {
-        await new Promise(resolve => {
-          if (fallback.complete && fallback.naturalWidth) { resolve(); return; }
-          fallback.addEventListener('load', resolve, { once: true });
-          fallback.addEventListener('error', resolve, { once: true });
-          setTimeout(resolve, 15000);
-        });
-      }
+      const artwork = await loadArtwork();
+      if (!artwork || !artwork.naturalWidth) { canvas.hidden = true; return; }
       const source = document.createElement('canvas');
       source.width = source.height = 384;
       const sourceContext = source.getContext('2d', { willReadFrequently: true });
-      sourceContext.drawImage(fallback, 0, 0, 384, 384);
+      sourceContext.drawImage(artwork, 0, 0, 384, 384);
       particles = sampleArtwork(sourceContext.getImageData(0, 0, 384, 384).data, 384, 384);
       if (!particles.length) { canvas.hidden = true; return; }
       const colors = new Map();
