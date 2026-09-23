@@ -59,7 +59,7 @@ function mountTitleParticles() {
 
   let canvas, context, groups = [], particles = [];
   let width = 0, height = 0, ratio = 1, fontSize = 48;
-  let frame = 0, last = 0, ready = false, revealed = false, visible = true, resizeTimer, revealTimer;
+  let frame = 0, last = 0, ready = false, revealed = false, revealAt = 0, visible = true, resizeTimer, revealTimer;
   let paused = hero.classList.contains('motion-paused');
   const pointer = { x: 0, y: 0, active: false, radius: 46 };
 
@@ -67,13 +67,23 @@ function mountTitleParticles() {
     if (!context || !ready) return;
     context.clearRect(0, 0, width, height);
     const band = (paused || !revealed) ? -1 : ((time * 0.00012) % 1) * 1.7 - 0.35;
+    // 汇聚阶段：粒子按从左到右的节奏依次被"唤醒"，
+    // 与横线的书写方向同步，避免看起来像加载完成。
+    const elapsed = revealed && revealAt ? (time - revealAt) / 1000 : -1;
     for (const group of groups) {
       context.fillStyle = group.color;
       context.beginPath();
       for (const p of group.points) {
-        if (step) advanceParticle(p, pointer, step, pointer.radius);
         const wobble = paused ? 0 : Math.sin(time * 0.0007 + p.phase) * 0.34;
         const drift = paused ? 0 : Math.cos(time * 0.0009 + p.phase) * 0.34;
+        if (step && (!revealed || elapsed >= p.delay)) {
+          advanceParticle(p, pointer, step, pointer.radius);
+        } else if (step) {
+          p.x = p.homeX + p.ox;
+          p.y = p.homeY + p.oy;
+          p.vx = 0;
+          p.vy = 0;
+        }
         const x = p.x + wobble;
         const y = p.y + drift;
         context.moveTo(x + p.r, y);
@@ -180,10 +190,16 @@ function mountTitleParticles() {
       const homeY = sample.y * scale;
       const phase = Math.random() * Math.PI * 2;
       const tones = WARM_TONES.includes(sample.color) ? WARM_TONES : INK_TONES;
+      const scatter = spread * (0.2 + seed * 0.8);
+      const ox = Math.cos(phase) * scatter;
+      const oy = Math.sin(phase) * scatter;
       return {
         homeX, homeY, phase,
-        x: homeX + Math.cos(phase) * spread * (0.2 + seed * 0.8),
-        y: homeY + Math.sin(phase) * spread * (0.2 + seed * 0.8),
+        x: homeX + ox,
+        y: homeY + oy,
+        ox, oy,
+        // 从左到右依次汇聚，与横线书写的方向一致。
+        delay: (homeX / width) * 1.1 + Math.random() * 0.12,
         vx: 0, vy: 0,
         r: Math.max(0.72, fontSize / 112) * (0.86 + Math.random() * 0.3),
         color: tones[Math.floor(Math.random() * tones.length)],
@@ -235,9 +251,10 @@ function mountTitleParticles() {
     revealTimer = setTimeout(() => {
       if (!ready || !canvas) return;
       revealed = true;
+      revealAt = performance.now();
       heading.classList.add('title-particles-ready');
       sync();
-    }, 1600);
+    }, 1200);
   }
 
   function scheduleResize() {
