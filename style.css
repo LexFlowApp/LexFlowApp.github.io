@@ -70,7 +70,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .title-particles-ready .title-ink { background: none; -webkit-text-fill-color: transparent; animation: none; }
 .title-particles-ready .workflow-text { animation: none; }
 .motion-paused .title-particles { opacity: 1; }
-.particle-scene { position: relative; min-width: 0; width: 100%; aspect-ratio: 1; max-height: 460px; isolation: isolate; background: var(--paper); }
+.particle-scene { position: relative; min-width: 0; width: 100%; aspect-ratio: 1; max-height: 460px; isolation: isolate; background: var(--paper); overflow: hidden; }
 .particle-scene picture { position: absolute; inset: 0; display: block; }
 /* 图片里的图形只占画布的 65%，而粒子版占 85%；放大图片让两者尺寸一致，
    河狸粒子初始化较慢时就地替换也不会看起来"缩了一圈"。 */
@@ -88,7 +88,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .hero.intro-active h1 .title-ink { background: none; animation: none; }
 .hero.intro-active .title-particles,
 .hero.intro-active #beaver-canvas,
-.hero.intro-active .particle-fallback { opacity: 0 !important; }
+.hero.intro-active .particle-fallback { opacity: 0 !important; transition: none; }
 .hero-bottom { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
 .hero-bottom > div { min-width: 0; }
 .hero h2 { font-size: clamp(19px, 2vw, 24px); font-weight: 400; line-height: 1.65; margin: 0 0 14px; }
