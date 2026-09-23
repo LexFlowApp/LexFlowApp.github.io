@@ -60,8 +60,6 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .hero-stage { display: grid; grid-template-columns: 1.1fr 1fr; gap: 15px; align-items: center; margin: 18px 0 28px; }
 .hero h1 { position: relative; font-weight: 400; font-size: clamp(64px, 7.2vw, 100px); line-height: 1.18; letter-spacing: -.055em; margin: 0; padding-bottom: 16px; white-space: nowrap; }
 .flow-word { color: var(--accent); display: inline-block; position: relative; }
-.flow-word svg { position: absolute; bottom: -13px; left: 0; width: 100%; height: 22px; overflow: visible; }
-.flow-word path { fill: none; stroke: var(--terra); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 590; stroke-dashoffset: 590; animation: draw 1.5s .5s forwards; }
 .period { color: var(--accent); }
 /* The heading becomes a particle field; the DOM text stays for semantics. */
 .title-particles { position: absolute; left: 0; right: 0; top: 0; width: 100%; pointer-events: none; opacity: 0; transition: opacity .55s ease; }
@@ -71,11 +69,12 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .title-particles-ready .headline-word { animation: none; opacity: 1; transform: none; }
 .title-particles-ready .title-ink { background: none; -webkit-text-fill-color: transparent; animation: none; }
 .title-particles-ready .workflow-text { animation: none; }
-.title-particles-ready .flow-word path { animation: none; stroke-dashoffset: 0; }
 .motion-paused .title-particles { opacity: 1; }
 .particle-scene { position: relative; min-width: 0; width: 100%; aspect-ratio: 1; max-height: 460px; isolation: isolate; background: var(--paper); }
 .particle-scene picture { position: absolute; inset: 0; display: block; }
-.particle-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transition: opacity .25s; }
+/* 图片里的图形只占画布的 65%，而粒子版占 85%；放大图片让两者尺寸一致，
+   河狸粒子初始化较慢时就地替换也不会看起来"缩了一圈"。 */
+.particle-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transition: opacity .25s; transform: scale(1.3077); }
 #beaver-canvas { display: block; width: 100%; height: 100%; position: absolute; inset: 0; opacity: 0; transition: opacity .4s; touch-action: pan-y; cursor: crosshair; border-radius: 20px; }
 .particles-ready #beaver-canvas { opacity: 1; }
 .particles-ready .particle-fallback { opacity: 0; pointer-events: none; }
@@ -87,8 +86,9 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .hero-stage { position: relative; }
 .hero.intro-active h1 { color: transparent; -webkit-text-fill-color: transparent; }
 .hero.intro-active h1 .title-ink { background: none; animation: none; }
-.hero.intro-active .flow-word path { animation: none; stroke-dashoffset: 0; }
-.hero.intro-active .particle-fallback { opacity: 0; }
+.hero.intro-active .title-particles,
+.hero.intro-active #beaver-canvas,
+.hero.intro-active .particle-fallback { opacity: 0 !important; }
 .hero-bottom { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
 .hero-bottom > div { min-width: 0; }
 .hero h2 { font-size: clamp(19px, 2vw, 24px); font-weight: 400; line-height: 1.65; margin: 0 0 14px; }
@@ -266,7 +266,6 @@ dialog .button { margin-top: 15px; width: 100%; }
 .feature:nth-child(2) { transition-delay: .08s; }.feature:nth-child(3) { transition-delay: .16s; }
 @keyframes appear { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes draw { to { stroke-dashoffset: 0; } }
 @keyframes travel { 0% { left: 0; opacity: 0; } 15%,80% { opacity: 1; } 100% { left: 100%; opacity: 0; } }
 @keyframes bob { 50% { transform: translateY(-6px); } }
 @keyframes blink { 50% { opacity: 0; } }
@@ -375,7 +374,7 @@ dialog .button { margin-top: 15px; width: 100%; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  .flow-word path { stroke-dashoffset: 0; }.will-reveal { opacity: 1; transform: none; }
+  .will-reveal { opacity: 1; transform: none; }
 }
 
 /* Preserve the serif title and layout; animate its words, not the surrounding page. */
@@ -394,10 +393,8 @@ dialog .button { margin-top: 15px; width: 100%; }
 }
 .headline-second .title-ink { animation-delay: 1.65s; }
 .workflow-text { --ink-base: #916049; --ink-light: #d19a70; animation-delay: 2.1s; }
-.hero .flow-word path { animation-delay: .9s; animation-duration: 1.6s; }
 .has-paused-motion .headline-word { animation: none; opacity: 1; transform: none; }
 .motion-paused .title-ink { animation-play-state: paused; }
-.has-paused-motion .flow-word path { animation: none; stroke-dashoffset: 0; }
 @keyframes headline-arrive {
   from { opacity: 0; transform: translateY(18px); }
   to { opacity: 1; transform: translateY(0); }
