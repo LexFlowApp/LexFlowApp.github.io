@@ -220,7 +220,7 @@ function mountParticles() {
         if (attempt >= sources.length || Date.now() - started > 45000) { resolve(); return; }
         tryLoad();
       };
-      if (fallback.complete && fallback.naturalWidth) { resolve(); return; }
+      if (fallback.complete && fallback.naturalWidth) { resolve(fallback); return; }
       tryLoad();
     });
   }
