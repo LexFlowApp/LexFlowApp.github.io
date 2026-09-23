@@ -84,11 +84,13 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 /* Opening particle sequence covers the whole hero stage. */
 .intro-canvas { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
 .hero-stage { position: relative; }
-.hero.intro-active h1 { color: transparent; -webkit-text-fill-color: transparent; }
-.hero.intro-active h1 .title-ink { background: none; animation: none; }
-.hero.intro-active .title-particles,
-.hero.intro-active #beaver-canvas,
-.hero.intro-active .particle-fallback { opacity: 0 !important; transition: none; }
+/* html 自带 intro-pending，样式表会阻塞首屏绘制，
+   因此静态文字与图标从一开始就不显示，避免先看到成品再变成粒子。 */
+.intro-pending .hero h1 { color: transparent !important; -webkit-text-fill-color: transparent !important; }
+.intro-pending .hero h1 .title-ink { background: none; animation: none; }
+.intro-pending .particle-fallback,
+.intro-pending #beaver-canvas,
+.intro-pending .title-particles { opacity: 0 !important; transition: none; }
 .hero-bottom { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
 .hero-bottom > div { min-width: 0; }
 .hero h2 { font-size: clamp(19px, 2vw, 24px); font-weight: 400; line-height: 1.65; margin: 0 0 14px; }

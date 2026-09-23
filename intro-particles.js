@@ -113,15 +113,14 @@ function mountIntro() {
   const stage = document.querySelector('.hero-stage');
   let finish = () => {};
   window.__lexflowIntroDone = new Promise(resolve => { finish = resolve; });
-  if (!hero || !stage) { finish(); return; }
+  if (!hero || !stage) { document.documentElement.classList.remove('intro-pending'); finish(); return; }
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  if (reduced.matches) { hero.classList.add('intro-done'); finish(); return; }
+  if (reduced.matches) { document.documentElement.classList.remove('intro-pending'); hero.classList.add('intro-done'); finish(); return; }
 
   const canvas = document.createElement('canvas');
   canvas.className = 'intro-canvas';
   canvas.setAttribute('aria-hidden', 'true');
   stage.appendChild(canvas);
-  hero.classList.add('intro-active');
   const ctx = canvas.getContext('2d');
 
   const stageRect = stage.getBoundingClientRect();
@@ -201,7 +200,7 @@ function mountIntro() {
       canvas.style.transition = `opacity ${FADE_MS}ms ease`;
       canvas.style.opacity = '0';
       // 淡出期间就让常驻画布接管，两者位置与尺寸一致，不会出现第二次成形。
-      hero.classList.remove('intro-active');
+      document.documentElement.classList.remove('intro-pending');
       hero.classList.add('intro-done');
       // 标题粒子与河狸粒子必须同时接管，否则标题会晚半拍出现。
       finish();
@@ -251,7 +250,7 @@ function mountIntro() {
         targets.push({ x, y, color: toneFor(r, g, b) });
       }
     }
-    if (!targets.length) { driftGroups.length = groups.length; return; }
+    if (!targets.length) { document.documentElement.classList.remove('intro-pending'); return; }
     canvas.dataset.targetCount = String(targets.length);
     // Shuffle so the assignments are not spatially biased.
     for (let i = targets.length - 1; i > 0; i -= 1) {
