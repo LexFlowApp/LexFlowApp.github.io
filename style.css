@@ -82,6 +82,13 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .motion-toggle { position: absolute; bottom: 5px; right: 4px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; color: #907762; background: #f1ede4b3; transition: background .2s; }
 .motion-toggle:hover { background: #e7ded0; }
 .motion-toggle svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+/* Opening particle sequence covers the whole hero stage. */
+.intro-canvas { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+.hero-stage { position: relative; }
+.hero.intro-active h1 { color: transparent; -webkit-text-fill-color: transparent; }
+.hero.intro-active h1 .title-ink { background: none; animation: none; }
+.hero.intro-active .flow-word path { animation: none; stroke-dashoffset: 0; }
+.hero.intro-active .particle-fallback { opacity: 0; }
 .hero-bottom { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
 .hero-bottom > div { min-width: 0; }
 .hero h2 { font-size: clamp(19px, 2vw, 24px); font-weight: 400; line-height: 1.65; margin: 0 0 14px; }

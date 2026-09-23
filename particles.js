@@ -134,8 +134,8 @@ function mountParticles() {
     particles.forEach(p => {
       p.homeX = width / 2 + p.u * size;
       p.homeY = height / 2 + p.v * size;
-      p.x = p.homeX + (intro ? Math.cos(p.phase) * size * 0.07 : 0);
-      p.y = p.homeY + (intro ? Math.sin(p.phase) * size * 0.07 : 0);
+      p.x = p.homeX + (intro ? Math.cos(p.phase) * size * 0.02 : 0);
+      p.y = p.homeY + (intro ? Math.sin(p.phase) * size * 0.02 : 0);
       p.vx = p.vy = 0;
     });
     intro = 0;

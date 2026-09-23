@@ -254,7 +254,7 @@ function mountTitleParticles() {
       revealAt = performance.now();
       heading.classList.add('title-particles-ready');
       sync();
-    }, 1200);
+    }, 4000);
   }
 
   function scheduleResize() {
