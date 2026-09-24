@@ -229,15 +229,10 @@ function mountTitleParticles() {
     ready = build();
     if (!ready) { release(); return; }
     canvas.dataset.particleCount = String(particles.length);
-    // 开场粒子层负责"从散点到成形"，这里只等它结束后接管，
-    // 因此不再有第二次汇聚动画。
-    const introDone = window.__lexflowIntroDone ?? Promise.resolve();
-    Promise.race([introDone, new Promise(resolve => setTimeout(resolve, 9000))]).then(() => {
-      if (!ready || !canvas) return;
-      revealed = true;
-      heading.classList.add('title-particles-ready');
-      sync();
-    });
+    // 页面没有开场动画，粒子构建完成即就地交接，立刻呈现最终状态。
+    revealed = true;
+    heading.classList.add('title-particles-ready');
+    sync();
   }
 
   function scheduleResize() {

@@ -71,7 +71,6 @@ function mountParticles() {
   let paused = reducedMotion.matches;
   document.querySelector('.hero')?.classList.toggle('motion-paused', paused);
   let releaseTimer;
-  let intro = 0;
 
   function draw(time, step = 0) {
     context.clearRect(0, 0, width, height);
@@ -108,7 +107,6 @@ function mountParticles() {
     if (!ready) return;
     document.querySelector('.hero')?.classList.toggle('motion-paused', paused);
     if (paused) {
-      document.querySelector('.hero')?.classList.add('has-paused-motion');
       particles.forEach(p => { p.x = p.homeX; p.y = p.homeY; p.vx = p.vy = 0; });
       draw(0);
     } else if (visible && !document.hidden) {
@@ -138,7 +136,6 @@ function mountParticles() {
       p.y = p.homeY;
       p.vx = p.vy = 0;
     });
-    intro = 0;
     pointer.active = false;
     draw(0);
   }
@@ -241,7 +238,6 @@ function mountParticles() {
         colors.get(p.color).push(p);
       });
       groups = [...colors].map(([color, points]) => ({ color, points }));
-      intro = reducedMotion.matches ? 0 : 1;
       ready = true;
       resize();
       scene.classList.add('particles-ready');

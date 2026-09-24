@@ -61,19 +61,18 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .hero h1 { position: relative; font-weight: 400; font-size: clamp(64px, 7.2vw, 100px); line-height: 1.18; letter-spacing: -.055em; margin: 0; padding-bottom: 16px; white-space: nowrap; }
 .flow-word { color: var(--accent); display: inline-block; position: relative; }
 .period { color: var(--accent); }
-/* The heading becomes a particle field; the DOM text stays for semantics. */
-.title-particles { position: absolute; left: 0; right: 0; top: 0; width: 100%; pointer-events: none; opacity: 0; transition: opacity .55s ease; }
+/* The heading becomes a particle field; the DOM text stays for semantics.
+   文字与粒子之间是极短的交叉淡入，只用于就地交接，不构成开场动画。 */
+.title-particles { position: absolute; left: 0; right: 0; top: 0; width: 100%; pointer-events: none; opacity: 0; transition: opacity .3s ease; }
 .title-particles-ready .title-particles { opacity: 1; }
 .title-particles-ready .headline-word,
-.title-particles-ready .period { color: transparent !important; -webkit-text-fill-color: transparent !important; transition: color .45s ease; }
-.title-particles-ready .headline-word { animation: none; opacity: 1; transform: none; }
-.title-particles-ready .title-ink { background: none; -webkit-text-fill-color: transparent; animation: none; }
-.title-particles-ready .workflow-text { animation: none; }
+.title-particles-ready .period { opacity: 0; transition: opacity .3s ease; }
 .motion-paused .title-particles { opacity: 1; }
 .particle-scene { position: relative; min-width: 0; width: 100%; aspect-ratio: 1; max-height: 460px; isolation: isolate; background: var(--paper); overflow: hidden; }
 .particle-scene picture { position: absolute; inset: 0; display: block; }
 /* 图片里的图形只占画布的 65%，而粒子版占 85%；放大图片让两者尺寸一致，
    河狸粒子初始化较慢时就地替换也不会看起来"缩了一圈"。 */
+/* 静态图标与粒子版形状一致，就绪后就地淡入替换，避免纹理突变，也不构成开场动画。 */
 .particle-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transition: opacity .25s; transform: scale(1.3077); }
 #beaver-canvas { display: block; width: 100%; height: 100%; position: absolute; inset: 0; opacity: 0; transition: opacity .4s; touch-action: pan-y; cursor: crosshair; border-radius: 20px; }
 .particles-ready #beaver-canvas { opacity: 1; }
@@ -81,16 +80,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .motion-toggle { position: absolute; bottom: 5px; right: 4px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; color: #907762; background: #f1ede4b3; transition: background .2s; }
 .motion-toggle:hover { background: #e7ded0; }
 .motion-toggle svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.5; }
-/* Opening particle sequence covers the whole hero stage. */
-.intro-canvas { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
 .hero-stage { position: relative; }
-/* html 自带 intro-pending，样式表会阻塞首屏绘制，
-   因此静态文字与图标从一开始就不显示，避免先看到成品再变成粒子。 */
-.intro-pending .hero h1 { color: transparent !important; -webkit-text-fill-color: transparent !important; }
-.intro-pending .hero h1 .title-ink { background: none; animation: none; }
-.intro-pending .particle-fallback,
-.intro-pending #beaver-canvas,
-.intro-pending .title-particles { opacity: 0 !important; transition: none; }
 .hero-bottom { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
 .hero-bottom > div { min-width: 0; }
 .hero h2 { font-size: clamp(19px, 2vw, 24px); font-weight: 400; line-height: 1.65; margin: 0 0 14px; }
@@ -262,7 +252,6 @@ dialog h2 { font-size: 23px; font-weight: 400; margin-top: 20px; }
 dialog p { font-size: 15px; line-height: 1.9; color: var(--muted); }
 dialog .button { margin-top: 15px; width: 100%; }
 .dialog-close { position: absolute; top: 12px; right: 15px; background: none; font-size: 28px; color: var(--muted); width: 36px; height: 36px; }
-.hero-in { animation: appear .8s both; }
 .will-reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
 .will-reveal.is-visible { opacity: 1; transform: none; }
 .feature:nth-child(2) { transition-delay: .08s; }.feature:nth-child(3) { transition-delay: .16s; }
@@ -379,33 +368,17 @@ dialog .button { margin-top: 15px; width: 100%; }
   .will-reveal { opacity: 1; transform: none; }
 }
 
-/* Preserve the serif title and layout; animate its words, not the surrounding page. */
-.headline-word { display: inline-block; animation: headline-arrive 1.1s cubic-bezier(.2,.65,.2,1) both; }
-.headline-first { animation-delay: .08s; }
-.headline-second { animation-delay: .25s; }
-.headline-third { animation-delay: .4s; }
-.headline-fourth { animation-delay: .52s; }
+/* Preserve the serif title and layout. 标题不做入场动画，也不做流光循环：
+   粒子层已经是最终形态，入场会与之竞争，看起来是"第二次出现"。 */
+.headline-word { display: inline-block; }
 .title-ink {
   --ink-base: #29261f; --ink-light: #9a7659;
   color: var(--ink-base);
   background: linear-gradient(110deg, var(--ink-base) 12%, var(--ink-base) 30%, var(--ink-light) 46%, var(--ink-base) 64%, var(--ink-base) 90%);
   background-size: 250% 100%;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: headline-light 7s ease-in-out 1.2s infinite;
 }
-.headline-second .title-ink { animation-delay: 1.65s; }
-.workflow-text { --ink-base: #916049; --ink-light: #d19a70; animation-delay: 2.1s; }
-.has-paused-motion .headline-word { animation: none; opacity: 1; transform: none; }
-.motion-paused .title-ink { animation-play-state: paused; }
-@keyframes headline-arrive {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes headline-light {
-  0%, 14% { background-position: 100% 50%; }
-  62%, 100% { background-position: 0% 50%; }
-}
+.workflow-text { --ink-base: #916049; --ink-light: #d19a70; }
 @media (prefers-reduced-motion: reduce) {
-  .headline-word { opacity: 1; transform: none; }
   .title-ink { background: none; -webkit-text-fill-color: currentColor; color: var(--ink-base); }
 }
