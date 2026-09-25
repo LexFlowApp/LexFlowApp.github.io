@@ -200,7 +200,7 @@ function mountTitleParticles() {
     clearTimeout(resizeTimer);
     revealed = false;
     heading.classList.remove('title-particles-ready');
-    canvas?.remove();
+    if (canvas) canvas.remove();
     canvas = null;
     context = null;
     ready = false;
@@ -215,10 +215,10 @@ function mountTitleParticles() {
     // 避免被体积更大的中文字体拖慢；超时后先用当前可用字体取样。
     try {
       await Promise.race([
-        document.fonts?.load('400 100px "LexFlow Web Serif"', 'Everything is Workflow.'),
+        (document.fonts ? document.fonts.load('400 100px "LexFlow Web Serif"', 'Everything is Workflow.') : Promise.resolve()),
         new Promise(resolve => setTimeout(resolve, 4000)),
       ]);
-    } catch { /* sampling still works with the fallback face */ }
+    } catch (error) { /* sampling still works with the fallback face */ }
     if (reduced.matches) return;
     if (!canvas) {
       canvas = document.createElement('canvas');

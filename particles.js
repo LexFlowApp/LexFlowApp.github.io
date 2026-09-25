@@ -59,9 +59,9 @@ export function sampleArtwork(data, width, height) {
 function mountParticles() {
   const scene = document.querySelector('#beaver-scene');
   const canvas = document.querySelector('#beaver-canvas');
-  const fallback = scene?.querySelector('.particle-fallback');
-  const control = scene?.querySelector('.motion-toggle');
-  const context = canvas?.getContext('2d');
+  const fallback = scene ? scene.querySelector('.particle-fallback') : null;
+  const control = scene ? scene.querySelector('.motion-toggle') : null;
+  const context = canvas ? canvas.getContext('2d') : null;
   if (!context || !fallback || !control) { if (canvas) canvas.hidden = true; return; }
 
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -69,7 +69,7 @@ function mountParticles() {
   let particles = [], groups = [], width = 0, height = 0, size = 0, pixelRatio = 0;
   let frame = 0, lastTime = 0, visible = true, ready = false;
   let paused = reducedMotion.matches;
-  document.querySelector('.hero')?.classList.toggle('motion-paused', paused);
+  var heroEl = document.querySelector('.hero'); if (heroEl) heroEl.classList.toggle('motion-paused', paused);
   let releaseTimer;
 
   function draw(time, step = 0) {
@@ -105,7 +105,7 @@ function mountParticles() {
     frame = 0;
     lastTime = 0;
     if (!ready) return;
-    document.querySelector('.hero')?.classList.toggle('motion-paused', paused);
+    var heroEl = document.querySelector('.hero'); if (heroEl) heroEl.classList.toggle('motion-paused', paused);
     if (paused) {
       particles.forEach(p => { p.x = p.homeX; p.y = p.homeY; p.vx = p.vy = 0; });
       draw(0);
