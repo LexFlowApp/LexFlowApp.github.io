@@ -119,11 +119,22 @@ function mountParticles() {
       : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>';
   }
 
+  // 部分移动端内核会在视口尚未稳定时给出临时尺寸（表现为图形被压扁）。
+  // 连续两帧读到同一尺寸才应用，避免用不稳定的中间值绘制。
+  let pendingW = 0, pendingH = 0, pendingFrames = 0;
   function resize() {
     const rect = canvas.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
     const dpr = Math.min(devicePixelRatio || 1, 2);
     if (width === rect.width && height === rect.height && pixelRatio === dpr) return;
+    if (Math.abs(rect.width - pendingW) < 0.5 && Math.abs(rect.height - pendingH) < 0.5) {
+      pendingFrames += 1;
+    } else {
+      pendingW = rect.width; pendingH = rect.height; pendingFrames = 0;
+      setTimeout(resize, 50);
+      return;
+    }
+    if (pendingFrames < 1) { setTimeout(resize, 50); return; }
     width = rect.width; height = rect.height; pixelRatio = dpr;
     size = Math.min(width, height) * 0.85;
     canvas.width = Math.round(width * dpr);
@@ -220,6 +231,8 @@ function mountParticles() {
       control.hidden = false;
       if (typeof ResizeObserver === 'function') new ResizeObserver(resize).observe(scene);
       else window.addEventListener('resize', resize);
+      window.addEventListener('orientationchange', resize);
+      [120, 500, 1500].forEach(delay => setTimeout(resize, delay));
       syncAnimation();
     } catch (error) {
       // Keep the original illustration visible if canvas or image loading fails.
@@ -233,6 +246,30 @@ function mountParticles() {
     }
   }
   initialize();
+
+  // 临时诊断: 网址后加 ?diag=1 时在页面底部显示关键尺寸, 供移动端实测取证。
+  if (/[?&]diag=1/.test(location.search)) {
+    setTimeout(function () {
+      const sceneRect = scene.getBoundingClientRect();
+      const canvasRect = canvas.getBoundingClientRect();
+      const staticRect = fallback.getBoundingClientRect();
+      const box = document.createElement('div');
+      box.setAttribute('data-diag', 'on');
+      box.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#1c1a17;color:#fff;font:11px/1.5 monospace;padding:8px 10px;white-space:pre-wrap;word-break:break-all;';
+      box.textContent = [
+        'UA: ' + navigator.userAgent,
+        'viewport: ' + window.innerWidth + 'x' + window.innerHeight + ' dpr=' + (window.devicePixelRatio || 1),
+        'scene: ' + Math.round(sceneRect.width) + 'x' + Math.round(sceneRect.height),
+        'canvas css: ' + Math.round(canvasRect.width) + 'x' + Math.round(canvasRect.height),
+        'canvas px: ' + canvas.width + 'x' + canvas.height,
+        'img css: ' + Math.round(staticRect.width) + 'x' + Math.round(staticRect.height) + ' natural=' + fallback.naturalWidth,
+        'size var: ' + Math.round(size),
+        'ready: ' + ready + ' particles: ' + particles.length,
+        'aspectRatio CSS support: ' + (window.CSS && CSS.supports ? CSS.supports('aspect-ratio', '1') : 'unknown'),
+      ].join('\n');
+      document.body.appendChild(box);
+    }, 2500);
+  }
 }
 
 if (typeof document !== 'undefined') mountParticles();

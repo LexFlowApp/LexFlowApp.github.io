@@ -264,6 +264,7 @@ function mountTitleParticles() {
   heading.addEventListener('pointercancel', () => { pointer.active = false; });
   if (typeof ResizeObserver === 'function') new ResizeObserver(scheduleResize).observe(heading);
   else window.addEventListener('resize', scheduleResize);
+  window.addEventListener('orientationchange', scheduleResize);
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(entries => {
       visible = entries[0].isIntersecting;
