@@ -67,7 +67,6 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .title-particles-ready .period { opacity: 0; transition: opacity .3s ease; }
 .motion-paused .title-particles { opacity: 1; }
 .particle-scene { position: relative; min-width: 0; width: 100%; aspect-ratio: 1; max-height: 460px; isolation: isolate; background: var(--paper); overflow: hidden; }
-.particle-scene picture { position: absolute; inset: 0; display: block; }
 /* 图片里的图形只占画布的 65%，而粒子版占 85%；放大图片让两者尺寸一致，
    河狸粒子初始化较慢时就地替换也不会看起来"缩了一圈"。 */
 /* 静态图标与粒子版形状一致，就绪后就地淡入替换，避免纹理突变，也不构成开场动画。 */

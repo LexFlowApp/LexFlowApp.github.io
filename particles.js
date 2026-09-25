@@ -187,38 +187,12 @@ function mountParticles() {
     }).observe(scene);
   }
 
-  // 弱网下首张图片可能因连接失败而卡住；用带缓存穿透的重试兜底，
-  // 同时提供 WebP 失败后自动切 PNG 的路径，确保河狸始终能成形。
+  // 图形已随页面内嵌，不再有单独的图片请求，只需等它就绪。
   function loadArtwork() {
-    const sources = [
-      { src: './beaver-refined.webp', cache: '' },
-      { src: './beaver-refined.png', cache: '' },
-      { src: './beaver-refined.png', cache: '?retry=' + Date.now() },
-    ];
+    if (fallback.complete) return Promise.resolve(fallback.naturalWidth ? fallback : null);
     return new Promise(resolve => {
-      let attempt = 0;
-      const started = Date.now();
-      const tryLoad = () => {
-        const current = sources[Math.min(attempt, sources.length - 1)];
-        const url = current.src + current.cache;
-        const probe = new Image();
-        const giveUp = setTimeout(() => { probe.src = ''; next(); }, 12000);
-        probe.onload = () => {
-          clearTimeout(giveUp);
-          if (fallback.src !== url) fallback.src = url;
-          resolve(probe);
-        };
-        probe.onerror = () => { clearTimeout(giveUp); next(); };
-        probe.src = url;
-      };
-      const next = () => {
-        attempt += 1;
-        // 总时长超过 45 秒时停止重试，让静态图标兜底。
-        if (attempt >= sources.length || Date.now() - started > 45000) { resolve(); return; }
-        tryLoad();
-      };
-      if (fallback.complete && fallback.naturalWidth) { resolve(fallback); return; }
-      tryLoad();
+      fallback.addEventListener('load', () => resolve(fallback.naturalWidth ? fallback : null), { once: true });
+      fallback.addEventListener('error', () => resolve(null), { once: true });
     });
   }
 
