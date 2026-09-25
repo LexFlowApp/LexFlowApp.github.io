@@ -300,40 +300,6 @@ function mountParticles() {
     }
   }
   initialize();
-
-  // 临时诊断: 网址后加 ?diag=1 时在页面底部显示关键尺寸, 供移动端实测取证。
-  if (/[?&]diag=1/.test(location.search)) {
-    setTimeout(function () {
-      const sceneRect = scene.getBoundingClientRect();
-      const canvasRect = canvas.getBoundingClientRect();
-      const staticRect = fallback.getBoundingClientRect();
-      const box = document.createElement('div');
-      box.setAttribute('data-diag', 'on');
-      box.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#1c1a17;color:#fff;font:11px/1.5 monospace;padding:8px 10px;white-space:pre-wrap;word-break:break-all;';
-      // 直接抽查画布像素，确认粒子是否真的画上去了（而不只是尺寸正确）。
-      let painted = 0;
-      try {
-        const img = context.getImageData(0, 0, canvas.width, canvas.height).data;
-        for (let i = 3; i < img.length; i += 4) if (img[i] > 10) painted += 1;
-      } catch (error) { painted = -1; }
-      const link = document.querySelector('link[rel="stylesheet"]');
-      const version = link ? (link.getAttribute('href') || '').replace(/[^0-9a-z]/gi, '').slice(-10) : '(未知)';
-      box.textContent = [
-        'UA: ' + navigator.userAgent,
-        'viewport: ' + window.innerWidth + 'x' + window.innerHeight + ' dpr=' + (window.devicePixelRatio || 1),
-        'scene: ' + Math.round(sceneRect.width) + 'x' + Math.round(sceneRect.height),
-        'canvas css: ' + Math.round(canvasRect.width) + 'x' + Math.round(canvasRect.height),
-        'canvas px: ' + canvas.width + 'x' + canvas.height,
-        'img css: ' + Math.round(staticRect.width) + 'x' + Math.round(staticRect.height) + ' natural=' + fallback.naturalWidth,
-        'size var: ' + Math.round(size),
-        'ready: ' + ready + ' revealed: ' + revealed + ' particles: ' + particles.length,
-        'painted px: ' + painted,
-        'sheet version: ' + version,
-        'title particles: ' + (document.querySelector('canvas.title-particles') ? document.querySelector('canvas.title-particles').dataset.particleCount : 'none'),
-      ].join('\n');
-      document.body.appendChild(box);
-    }, 2500);
-  }
 }
 
 if (typeof document !== 'undefined') mountParticles();
