@@ -237,10 +237,11 @@ dialog::backdrop { background: #29261f66; backdrop-filter: blur(7px); }
 
 dialog h2 { font-size: 23px; font-weight: 400; margin-top: 20px; }
 dialog p { font-size: 15px; line-height: 1.9; color: var(--muted); }
-dialog .button { margin-top: 15px; width: 100%; }
+dialog .button { margin-top: 15px; padding: 12px 22px; font-size: 14px; }
+dialog .button + .button { margin-left: 10px; }
 dialog .dialog-link { background: none; color: var(--accent); border: 1px solid #ddc9bc; text-decoration: none; }
 dialog .dialog-link:hover { background: #f6efe8; transform: none; }
-dialog .dialog-confirm { margin-top: 9px; }
+
 .dialog-close { position: absolute; top: 12px; right: 15px; background: none; font-size: 28px; color: var(--muted); width: 36px; height: 36px; }
 /* 弹窗打开时焦点自动落在关闭按钮上，聚焦轮廓会显示成难看的方框；Esc 与「知道了」按钮仍可关闭。 */
 .dialog-close:focus, .dialog-close:focus-visible { outline: none; }
@@ -380,12 +381,15 @@ dialog .dialog-confirm { margin-top: 9px; }
 .install-step h2 { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 600; margin: 0 0 15px; }
 .step-index { display: inline-grid; place-items: center; width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: var(--soft); color: var(--accent); font-size: 14px; font-weight: 600; }
 .install-step p { line-height: 1.9; margin: 0 0 12px; }
-.install-substeps { margin: 4px 0 16px; padding-left: 22px; }
-.install-substeps li { line-height: 1.9; margin-bottom: 9px; }
+.install-step > p, .install-download { margin-left: 40px; }
+.install-substeps { margin: 4px 0 16px 40px; padding-left: 0; list-style: none; counter-reset: substep; }
+.install-substeps li { position: relative; line-height: 1.9; margin-bottom: 9px; padding-left: 22px; counter-increment: substep; }
+.install-substeps li::before { content: counter(substep) "."; position: absolute; left: 0; color: var(--muted); }
 .install-substeps .fine-note { display: block; }
 .install-download { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 18px 0 4px; }
+.install-download .button { padding: 13px 22px; font-size: 15px; }
 .install-download .availability { font-size: 13px; }
-.install-step-key { background: var(--soft); border-radius: 14px; padding: 26px 26px 22px; }
+.install-step-key { background: var(--soft); border-radius: 14px; padding: 26px 26px 22px; margin-left: -26px; margin-right: -26px; }
 .install-step-key { border-top: 0; }
 .install-faq { border-top: 1px solid var(--line); padding-top: 30px; margin-top: 38px; }
 .install-faq h2 { font-size: 22px; font-weight: 600; margin: 0 0 16px; }
@@ -397,11 +401,11 @@ dialog .dialog-confirm { margin-top: 9px; }
 .closing-note { font-size: 13px; color: var(--muted); margin: 16px 0 0; }
 .closing-note a { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
 .dialog-note { margin-top: 12px; }
-[data-copy-url] { margin-top: 17px; width: 100%; }
+[data-copy-url] { margin-top: 17px; }
 
 @media (max-width: 800px) {
   .install { padding-top: 34px; }
   .install-head h1 { font-size: 30px; }
   .install-step h2 { font-size: 19px; }
-  .install-step-key { padding: 20px 17px 17px; border-radius: 12px; }
+  .install-step-key { padding: 20px 17px 17px; border-radius: 12px; margin-left: -17px; margin-right: -17px; }
 }
