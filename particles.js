@@ -146,6 +146,7 @@ function mountParticles() {
     // 始终量不到"连续两次一致"时也采用最新读数, 避免一直画不出来。
     if (pendingFrames < 1 && resizeAttempts < 8) { setTimeout(resize, 50); return; }
     resizeAttempts = 0;
+    const firstLayout = !width;   // 首次布局: 画完立刻交接, 不必再等一帧
     width = rect.width; height = rect.height; pixelRatio = dpr;
     size = Math.min(width, height) * 0.85;
     canvas.width = Math.round(width * dpr);
@@ -160,6 +161,7 @@ function mountParticles() {
     });
     pointer.active = false;
     draw(0);
+    if (firstLayout) revealWhenPainted();
   }
 
   function updatePointer(event) {

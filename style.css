@@ -70,7 +70,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 /* 图片里的图形只占画布的 65%，而粒子版占 85%；放大图片让两者尺寸一致，
    河狸粒子初始化较慢时就地替换也不会看起来"缩了一圈"。 */
 /* 静态图标与粒子版形状一致，就绪后就地淡入替换，避免纹理突变，也不构成开场动画。 */
-.particle-fallback { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transition: opacity .25s; transform: scale(1.3077); }
+.particle-fallback { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transition: opacity .15s; transform: scale(1.3077); }
 #beaver-canvas { display: block; width: 100%; height: 100%; position: absolute; top: 0; right: 0; bottom: 0; left: 0; opacity: 0; transition: opacity .4s; touch-action: pan-y; cursor: crosshair; border-radius: 20px; }
 .particles-ready #beaver-canvas { opacity: 1; }
 .particles-ready .particle-fallback { opacity: 0; pointer-events: none; }
