@@ -34,11 +34,28 @@ function startDownload() {
   link.remove();
 }
 
+// 点击下载按钮先弹窗，让用户在下载前看到系统要求与安装说明；
+// 非 Mac 设备改为提示到电脑上打开。
 document.querySelectorAll('[data-download]').forEach(button => button.addEventListener('click', () => {
-  if (!DOWNLOAD_URL) { if (dialog) dialog.showModal(); return; }
-  if (DEVICE === 'mac') { startDownload(); return; }
-  if (mobileDialog) mobileDialog.showModal();
+  if (DEVICE !== 'mac') { if (mobileDialog) mobileDialog.showModal(); return; }
+  if (dialog) dialog.showModal();
 }));
+
+// 弹窗内的下载按钮才真正发起下载。
+document.querySelectorAll('[data-start-download]').forEach(button => button.addEventListener('click', () => {
+  if (!DOWNLOAD_URL) return;
+  startDownload();
+  if (dialog) dialog.close();
+}));
+
+// 下载地址就绪后去掉「即将开放」提示，并让下载按钮可用。
+(function () {
+  if (!DOWNLOAD_URL) return;
+  const available = document.querySelector('.dialog-availability');
+  if (available) available.remove();
+  const lead = document.querySelector('.dialog-lead');
+  if (lead) lead.textContent = lead.textContent.replace('下载后按安装说明完成首次打开。', '下载后按安装说明完成首次打开，只有首次需要额外操作。');
+})();
 
 document.querySelectorAll('.dialog-close,.dialog-confirm').forEach(button => button.addEventListener('click', () => {
   const box = button.closest('dialog');
