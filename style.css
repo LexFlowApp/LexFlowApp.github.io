@@ -243,8 +243,6 @@ dialog .dialog-link:hover { background: #f6efe8; transform: none; }
 dialog .dialog-actions { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
 dialog .dialog-actions .button { margin-top: 0; }
 dialog .dialog-lead { color: var(--muted); line-height: 1.85; margin: 0; }
-dialog .dialog-confirm { display: block; margin: 14px auto 0; background: none; color: var(--muted); border: 0; text-decoration: underline; text-underline-offset: 4px; padding: 6px 10px; }
-dialog .dialog-confirm:hover { background: none; color: var(--ink); transform: none; }
 
 .dialog-close { position: absolute; top: 12px; right: 15px; background: none; font-size: 28px; color: var(--muted); width: 36px; height: 36px; }
 /* 弹窗打开时焦点自动落在关闭按钮上，聚焦轮廓会显示成难看的方框；Esc 与「知道了」按钮仍可关闭。 */
