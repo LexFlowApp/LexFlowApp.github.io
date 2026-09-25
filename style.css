@@ -368,3 +368,40 @@ dialog .button { margin-top: 15px; width: 100%; }
 @media (prefers-reduced-motion: reduce) {
   .title-ink { background: none; -webkit-text-fill-color: currentColor; color: var(--ink-base); }
 }
+
+/* 安装说明页。风格与首页一致，供下载后查阅安装与首次打开步骤。 */
+.install { max-width: 760px; margin: 0 auto; padding: 56px 0 40px; }
+.install-head h1 { font-size: 40px; font-weight: 400; line-height: 1.35; margin: 0 0 14px; }
+.install-head > p { color: var(--muted); font-size: 16px; line-height: 1.85; margin: 0; }
+.install-step { border-top: 1px solid var(--line); padding-top: 30px; margin-top: 38px; }
+.install-step h2 { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 600; margin: 0 0 15px; }
+.step-index { display: inline-grid; place-items: center; width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: var(--soft); color: var(--accent); font-size: 14px; font-weight: 600; }
+.install-step p { line-height: 1.9; margin: 0 0 12px; }
+.install-substeps { margin: 4px 0 16px; padding-left: 22px; }
+.install-substeps li { line-height: 1.9; margin-bottom: 9px; }
+.install-substeps .fine-note { display: block; }
+.install-download { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 18px 0 4px; }
+.install-download .availability { font-size: 13px; }
+.install-step-key { background: var(--soft); border-radius: 14px; padding: 26px 26px 22px; }
+.install-step-key { border-top: 0; }
+.install-figure { margin: 14px 0 0; border: 1px dashed #d7cdbe; border-radius: 10px; background: #fdfcfa; min-height: 84px; display: grid; place-items: center; padding: 18px; }
+.install-figure span { color: #a89c8b; font-size: 13px; }
+.install-figure img { max-width: 100%; height: auto; border-radius: 8px; }
+.install-faq { border-top: 1px solid var(--line); padding-top: 30px; margin-top: 38px; }
+.install-faq h2 { font-size: 22px; font-weight: 600; margin: 0 0 16px; }
+.install-faq details { border-bottom: 1px solid var(--line); padding: 13px 0; }
+.install-faq summary { cursor: pointer; font-size: 15px; }
+.install-faq details p { color: var(--muted); line-height: 1.85; margin: 11px 0 0; }
+.install-back { margin: 40px 0 0; }
+.install-back a { color: var(--accent); }
+.closing-note { font-size: 13px; color: var(--muted); margin: 16px 0 0; }
+.closing-note a { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+.dialog-note { margin-top: 12px; }
+[data-copy-url] { margin-top: 17px; width: 100%; }
+
+@media (max-width: 800px) {
+  .install { padding-top: 34px; }
+  .install-head h1 { font-size: 30px; }
+  .install-step h2 { font-size: 19px; }
+  .install-step-key { padding: 20px 17px 17px; border-radius: 12px; }
+}
