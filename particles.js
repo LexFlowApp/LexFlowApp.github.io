@@ -67,7 +67,7 @@ function mountParticles() {
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const pointer = { x: 0, y: 0, active: false };
   let particles = [], groups = [], width = 0, height = 0, size = 0, pixelRatio = 0;
-  let frame = 0, lastTime = 0, visible = true, ready = false;
+  let frame = 0, lastTime = 0, visible = true, ready = false, painted = false, revealed = false;
   let paused = reducedMotion.matches;
   var heroEl = document.querySelector('.hero'); if (heroEl) heroEl.classList.toggle('motion-paused', paused);
   let releaseTimer;
@@ -89,6 +89,16 @@ function mountParticles() {
       }
       context.fill();
     }
+    painted = true;
+    revealWhenPainted();
+  }
+
+  // 画布真正画上内容之后才切换显示: 避免"静态图已淡出、粒子还空着"的空白窗口。
+  function revealWhenPainted() {
+    if (revealed || !ready || !painted) return;
+    revealed = true;
+    scene.classList.add('particles-ready');
+    fallback.setAttribute('aria-hidden', 'true');
   }
 
   function tick(time) {
@@ -121,20 +131,21 @@ function mountParticles() {
 
   // 部分移动端内核会在视口尚未稳定时给出临时尺寸（表现为图形被压扁）。
   // 连续两帧读到同一尺寸才应用，避免用不稳定的中间值绘制。
-  let pendingW = 0, pendingH = 0, pendingFrames = 0;
+  let pendingW = 0, pendingH = 0, pendingFrames = 0, resizeAttempts = 0;
   function resize() {
     const rect = canvas.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
     const dpr = Math.min(devicePixelRatio || 1, 2);
-    if (width === rect.width && height === rect.height && pixelRatio === dpr) return;
+    if (width === rect.width && height === rect.height && pixelRatio === dpr) { resizeAttempts = 0; return; }
     if (Math.abs(rect.width - pendingW) < 0.5 && Math.abs(rect.height - pendingH) < 0.5) {
       pendingFrames += 1;
     } else {
       pendingW = rect.width; pendingH = rect.height; pendingFrames = 0;
-      setTimeout(resize, 50);
-      return;
     }
-    if (pendingFrames < 1) { setTimeout(resize, 50); return; }
+    resizeAttempts += 1;
+    // 始终量不到"连续两次一致"时也采用最新读数, 避免一直画不出来。
+    if (pendingFrames < 1 && resizeAttempts < 8) { setTimeout(resize, 50); return; }
+    resizeAttempts = 0;
     width = rect.width; height = rect.height; pixelRatio = dpr;
     size = Math.min(width, height) * 0.85;
     canvas.width = Math.round(width * dpr);
@@ -198,12 +209,57 @@ function mountParticles() {
     }).observe(scene);
   }
 
-  // 图形已随页面内嵌，不再有单独的图片请求，只需等它就绪。
+  // 图形已随页面内嵌，不再有单独的图片请求。手机上图片是分块解码的，
+  // "加载完成"不等于像素可用，因此等 decode() 完成后再取样。
   function loadArtwork() {
-    if (fallback.complete) return Promise.resolve(fallback.naturalWidth ? fallback : null);
+    function decoded() {
+      if (!fallback.naturalWidth || !fallback.decode) return Promise.resolve(fallback.naturalWidth ? fallback : null);
+      const wait = fallback.decode().then(function () { return fallback; }, function () {
+        // 部分实现会对"已解码图片"的二次 decode 抛错，此时图片本身是可用的。
+        return fallback.naturalWidth ? fallback : null;
+      });
+      // 若某个内核的 decode() 迟迟不结束，超时后按现有图片继续（取样自检仍会兜底）。
+      const guard = new Promise(function (resolve) { setTimeout(function () { resolve(fallback.naturalWidth ? fallback : null); }, 3000); });
+      return Promise.race([wait, guard]);
+    }
+    if (fallback.complete) return decoded();
     return new Promise(resolve => {
-      fallback.addEventListener('load', () => resolve(fallback.naturalWidth ? fallback : null), { once: true });
+      fallback.addEventListener('load', () => { decoded().then(resolve); }, { once: true });
       fallback.addEventListener('error', () => resolve(null), { once: true });
+    });
+  }
+
+  // 图片在解码途中取样会得到残缺轮廓（表现为图形压扁或缺块）。这里对取样结果做自检：
+  // 粒子数或图形跨度明显偏离基准时延后重取，直到取得完整图形或超时。
+  const SAMPLE_MIN_POINTS = 4200, SAMPLE_MAX_POINTS = 14000, SAMPLE_MIN_SPAN = 0.55;
+  function sampleArtworkChecked(attempt) {
+    const source = document.createElement('canvas');
+    source.width = source.height = 384;
+    const sourceContext = source.getContext('2d', { willReadFrequently: true });
+    sourceContext.drawImage(fallback, 0, 0, 384, 384);
+    let points = [];
+    try {
+      points = sampleArtwork(sourceContext.getImageData(0, 0, 384, 384).data, 384, 384);
+    } catch (error) { points = []; }
+    let span = 0;
+    if (points.length) {
+      let minU = 1, maxU = -1, minV = 1, maxV = -1;
+      for (let i = 0; i < points.length; i += 1) {
+        const pt = points[i];
+        if (pt.u < minU) minU = pt.u;
+        if (pt.u > maxU) maxU = pt.u;
+        if (pt.v < minV) minV = pt.v;
+        if (pt.v > maxV) maxV = pt.v;
+      }
+      span = Math.max(maxU - minU, maxV - minV);
+    }
+    const good = points.length >= SAMPLE_MIN_POINTS && points.length <= SAMPLE_MAX_POINTS && span >= SAMPLE_MIN_SPAN;
+    if (good) return Promise.resolve(points);
+    // 始终取不到完整图形（图片未解码完/内核异常）时，宁可保留完整的静态图，
+    // 也不采用残缺取样——后者正是"图形缺块、被压扁"的成因。
+    if (attempt >= 30) return Promise.resolve([]);
+    return new Promise(function (resolve) {
+      setTimeout(function () { resolve(sampleArtworkChecked(attempt + 1)); }, 120 + attempt * 40);
     });
   }
 
@@ -211,11 +267,9 @@ function mountParticles() {
     try {
       const artwork = await loadArtwork();
       if (!artwork || !artwork.naturalWidth) { canvas.hidden = true; return; }
-      const source = document.createElement('canvas');
-      source.width = source.height = 384;
-      const sourceContext = source.getContext('2d', { willReadFrequently: true });
-      sourceContext.drawImage(artwork, 0, 0, 384, 384);
-      particles = sampleArtwork(sourceContext.getImageData(0, 0, 384, 384).data, 384, 384);
+      // 自检重试最多 30 轮（约 20 秒）；若始终取不到完整图形，则放弃粒子效果、
+      // 保留完整的静态图，避免出现残缺或压扁的图形。
+      particles = await sampleArtworkChecked(0);
       if (!particles.length) { canvas.hidden = true; return; }
       const colors = new Map();
       particles.forEach(p => {
@@ -225,8 +279,7 @@ function mountParticles() {
       groups = [...colors].map(([color, points]) => ({ color, points }));
       ready = true;
       resize();
-      scene.classList.add('particles-ready');
-      fallback.setAttribute('aria-hidden', 'true');
+      revealWhenPainted();
       canvas.setAttribute('data-particle-count', String(particles.length));
       control.hidden = false;
       if (typeof ResizeObserver === 'function') new ResizeObserver(resize).observe(scene);
@@ -238,6 +291,7 @@ function mountParticles() {
       // Keep the original illustration visible if canvas or image loading fails.
       console.warn('LexFlow: 河狸粒子初始化失败，保留静态图标。', error);
       ready = false;
+      revealed = false;
       cancelAnimationFrame(frame);
       scene.classList.remove('particles-ready');
       fallback.removeAttribute('aria-hidden');
@@ -256,6 +310,14 @@ function mountParticles() {
       const box = document.createElement('div');
       box.setAttribute('data-diag', 'on');
       box.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#1c1a17;color:#fff;font:11px/1.5 monospace;padding:8px 10px;white-space:pre-wrap;word-break:break-all;';
+      // 直接抽查画布像素，确认粒子是否真的画上去了（而不只是尺寸正确）。
+      let painted = 0;
+      try {
+        const img = context.getImageData(0, 0, canvas.width, canvas.height).data;
+        for (let i = 3; i < img.length; i += 4) if (img[i] > 10) painted += 1;
+      } catch (error) { painted = -1; }
+      const link = document.querySelector('link[rel="stylesheet"]');
+      const version = link ? (link.getAttribute('href') || '').replace(/[^0-9a-z]/gi, '').slice(-10) : '(未知)';
       box.textContent = [
         'UA: ' + navigator.userAgent,
         'viewport: ' + window.innerWidth + 'x' + window.innerHeight + ' dpr=' + (window.devicePixelRatio || 1),
@@ -264,8 +326,10 @@ function mountParticles() {
         'canvas px: ' + canvas.width + 'x' + canvas.height,
         'img css: ' + Math.round(staticRect.width) + 'x' + Math.round(staticRect.height) + ' natural=' + fallback.naturalWidth,
         'size var: ' + Math.round(size),
-        'ready: ' + ready + ' particles: ' + particles.length,
-        'aspectRatio CSS support: ' + (window.CSS && CSS.supports ? CSS.supports('aspect-ratio', '1') : 'unknown'),
+        'ready: ' + ready + ' revealed: ' + revealed + ' particles: ' + particles.length,
+        'painted px: ' + painted,
+        'sheet version: ' + version,
+        'title particles: ' + (document.querySelector('canvas.title-particles') ? document.querySelector('canvas.title-particles').dataset.particleCount : 'none'),
       ].join('\n');
       document.body.appendChild(box);
     }, 2500);

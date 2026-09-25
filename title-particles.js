@@ -215,7 +215,10 @@ function mountTitleParticles() {
     // 避免被体积更大的中文字体拖慢；超时后先用当前可用字体取样。
     try {
       await Promise.race([
-        (document.fonts ? document.fonts.load('400 100px "LexFlow Web Serif"', 'Everything is Workflow.') : Promise.resolve()),
+        (document.fonts ? Promise.race([
+          document.fonts.load('400 100px "LexFlow Web Serif"', 'Everything is Workflow.'),
+          new Promise(function (resolve) { setTimeout(resolve, 3000); }),
+        ]) : Promise.resolve()),
         new Promise(resolve => setTimeout(resolve, 4000)),
       ]);
     } catch (error) { /* sampling still works with the fallback face */ }
