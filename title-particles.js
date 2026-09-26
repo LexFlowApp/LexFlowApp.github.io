@@ -1,6 +1,6 @@
 // The heading keeps its layout and semantics; a canvas samples the rendered
 // glyphs so the same letters can be scattered and re-gathered by the pointer.
-import { advanceParticle } from './particles.js?v=20260926n';
+import { advanceParticle } from './particles.js?v=20260926o';
 
 const INK = '#2b2721';
 const WARM = '#a86e49';
