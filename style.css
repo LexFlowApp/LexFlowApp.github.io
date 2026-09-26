@@ -300,7 +300,8 @@ dialog .dialog-lead { color: var(--muted); line-height: 1.85; margin: 0; }
   .local-copy p { font-size: 15px; }.local-points { gap: 7px; }.local-points span { padding: 6px 8px; font-size: 12px; }
 }
 @media (max-width: 620px) {
-  .wrap { width: calc(100% - 40px); }.header { padding-left: 20px; padding-right: 20px; }.header nav { display: none; }
+  .wrap { width: calc(100% - 40px); }.header { padding-left: 20px; padding-right: 20px; }.header nav { display: flex; gap: 13px; font-size: 12px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+  .header nav::-webkit-scrollbar { display: none; }
   .hero-stage { grid-template-columns: 1fr; gap: 0; margin-bottom: 20px; }
   .hero h1 { font-size: 56px; font-size: clamp(56px, 11vw, 76px); letter-spacing: -.055em; position: relative; z-index: 1; }
   .particle-scene { height: 350px; width: 350px; max-width: 100%; margin-left: auto; margin-right: auto; }
@@ -428,4 +429,16 @@ dialog .dialog-lead { color: var(--muted); line-height: 1.85; margin: 0; }
   .workflow-card { flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px 0; }
   .workflow-card h3 { font-size: 17px; }
   .workflow-download { width: 100%; }
+}
+
+/* 帮助页与社区页微调：高亮框行宽与正文一致、上下留白，下载按钮左对齐。 */
+.install-step-key { margin-top: 22px; margin-bottom: 22px; }
+.install-step-key > p { margin-left: 40px; }
+.install-step-key .install-substeps { margin-left: 40px; }
+.install-step .install-download { margin-left: 40px; justify-content: flex-start; }
+.closing-plain { text-align: left; border-top: 1px solid var(--line); padding-top: 44px; padding-bottom: 30px; }
+@media (max-width: 800px) {
+  .install-step-key { margin-left: 0; margin-right: 0; }
+  .install-step-key > p, .install-step-key .install-substeps { margin-left: 23px; }
+  .install-step .install-download { margin-left: 40px; }
 }
