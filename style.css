@@ -443,3 +443,6 @@ dialog .dialog-lead { color: var(--muted); line-height: 1.85; margin: 0; }
   .install-step-key > p, .install-step-key .install-substeps { margin-left: 23px; }
   .install-step .install-download { margin-left: 40px; }
 }
+
+/* 正文中的开源仓库链接需显示为可见链接，与站内其他链接一致。 */
+a[href^="https://github.com/"] { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
