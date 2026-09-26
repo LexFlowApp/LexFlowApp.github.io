@@ -7,8 +7,8 @@
 }
 @font-face {
   font-family: 'LexFlow Web Serif'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url('./fonts/LexFlowWebSerif-Regular-cjk.woff2?v=20260926q') format('woff2');
-  unicode-range: U+3000-3007, U+3012-3013, U+301C-301F, U+3020-303F, U+3400-4DBF, U+4E00-9FFF, U+FE30-FE4F;
+  src: url('./fonts/LexFlowWebSerif-Regular-cjk.woff2?v=20260926r') format('woff2');
+  unicode-range: U+2318, U+25A0-25FF, U+3000-3007, U+3012-3013, U+301C-301F, U+3020-303F, U+3400-4DBF, U+4E00-9FFF, U+FE30-FE4F;
 }
 @font-face {
   font-family: 'LexFlow Web Serif'; font-style: normal; font-weight: 600; font-display: swap;
@@ -17,8 +17,8 @@
 }
 @font-face {
   font-family: 'LexFlow Web Serif'; font-style: normal; font-weight: 600; font-display: swap;
-  src: url('./fonts/LexFlowWebSerif-SemiBold-cjk.woff2?v=20260926q') format('woff2');
-  unicode-range: U+3000-3007, U+3012-3013, U+301C-301F, U+3020-303F, U+3400-4DBF, U+4E00-9FFF, U+FE30-FE4F;
+  src: url('./fonts/LexFlowWebSerif-SemiBold-cjk.woff2?v=20260926r') format('woff2');
+  unicode-range: U+2318, U+25A0-25FF, U+3000-3007, U+3012-3013, U+301C-301F, U+3020-303F, U+3400-4DBF, U+4E00-9FFF, U+FE30-FE4F;
 }
 :root {
   --paper: #faf9f6; --ink: #29261f; --muted: #787166; --line: #e5e0d7;
