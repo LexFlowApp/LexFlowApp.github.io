@@ -300,8 +300,8 @@ dialog .dialog-lead { color: var(--muted); line-height: 1.85; margin: 0; }
   .local-copy p { font-size: 15px; }.local-points { gap: 7px; }.local-points span { padding: 6px 8px; font-size: 12px; }
 }
 @media (max-width: 620px) {
-  .wrap { width: calc(100% - 40px); }.header { padding-left: 20px; padding-right: 20px; }.header nav { display: flex; gap: 13px; font-size: 12px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
-  .header nav::-webkit-scrollbar { display: none; }
+  .wrap { width: calc(100% - 40px); }.header { justify-content: flex-start; gap: 18px; padding-left: 20px; padding-right: 20px; }.header nav { display: flex; flex: 1 1 auto; flex-wrap: wrap; gap: 11px; row-gap: 7px; justify-content: flex-start; font-size: 12px; }
+  .header nav a:nth-child(2) { display: inline; }
   .header .button { display: none; }.brand { font-size: 0; gap: 0; }
   .hero-stage { grid-template-columns: 1fr; gap: 0; margin-bottom: 20px; }
   .hero h1 { font-size: 56px; font-size: clamp(56px, 11vw, 76px); letter-spacing: -.055em; position: relative; z-index: 1; }
@@ -350,7 +350,7 @@ dialog .dialog-lead { color: var(--muted); line-height: 1.85; margin: 0; }
   dialog { padding: 38px 25px; } dialog h2 { font-size: 22px; }
 }
 @media (max-width: 360px) {
-  .wrap { width: calc(100% - 32px); }.header { padding-left: 16px; padding-right: 16px; gap: 12px; }.header nav { gap: 11px; }
+  .wrap { width: calc(100% - 32px); }.header { padding-left: 16px; padding-right: 16px; gap: 12px; }
   .brand img { width: 28px; height: 28px; }.button-small { font-size: 11px; padding: 10px 12px; }
   .button-small > span { display: none; }.hero h1 { font-size: 51px; }
   .lf-permission { display: none; }.app-nav button { font-size: 12px; gap: 4px; }.app-nav svg { width: 12px; }
