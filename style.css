@@ -26,7 +26,7 @@
   --font: 'LexFlow Web Serif', 'Songti SC', serif;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 32px; }
+html { scroll-behavior: smooth; scroll-padding-top: 32px; -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.7 var(--font); -webkit-font-smoothing: antialiased; }
 button, input, textarea, select { font: inherit; }
 button { cursor: pointer; border: 0; }
@@ -302,9 +302,10 @@ dialog .dialog-lead { color: var(--muted); line-height: 1.85; margin: 0; }
 @media (max-width: 620px) {
   .wrap { width: calc(100% - 40px); }.header { padding-left: 20px; padding-right: 20px; }.header nav { display: flex; gap: 13px; font-size: 12px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
   .header nav::-webkit-scrollbar { display: none; }
+  .header .button { display: none; }.brand { font-size: 0; gap: 0; }
   .hero-stage { grid-template-columns: 1fr; gap: 0; margin-bottom: 20px; }
   .hero h1 { font-size: 56px; font-size: clamp(56px, 11vw, 76px); letter-spacing: -.055em; position: relative; z-index: 1; }
-  .particle-scene { height: 350px; width: 350px; max-width: 100%; margin-left: auto; margin-right: auto; }
+  .particle-scene { height: 350px; width: 100%; max-width: 350px; margin-left: auto; margin-right: auto; }
   .hero h2 { font-size: 21px; }.hero-bottom { flex-direction: column; gap: 24px; }
   .showcase-label { gap: 12px; }.showcase-label > span { font-size: 11px; }
   .app-window { height: 520px; flex-direction: column; }
@@ -349,7 +350,7 @@ dialog .dialog-lead { color: var(--muted); line-height: 1.85; margin: 0; }
   dialog { padding: 38px 25px; } dialog h2 { font-size: 22px; }
 }
 @media (max-width: 360px) {
-  .wrap { width: calc(100% - 32px); }.header { padding-left: 16px; padding-right: 16px; gap: 12px; }.brand { font-size: 22px; }
+  .wrap { width: calc(100% - 32px); }.header { padding-left: 16px; padding-right: 16px; gap: 12px; }.header nav { gap: 11px; }
   .brand img { width: 28px; height: 28px; }.button-small { font-size: 11px; padding: 10px 12px; }
   .button-small > span { display: none; }.hero h1 { font-size: 51px; }
   .lf-permission { display: none; }.app-nav button { font-size: 12px; gap: 4px; }.app-nav svg { width: 12px; }
