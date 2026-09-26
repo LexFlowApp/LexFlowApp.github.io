@@ -1,6 +1,6 @@
 // The heading keeps its layout and semantics; a canvas samples the rendered
 // glyphs so the same letters can be scattered and re-gathered by the pointer.
-import { advanceParticle } from './particles.js?v=20260926i';
+import { advanceParticle } from './particles.js?v=20260926j';
 
 const INK = '#2b2721';
 const WARM = '#a86e49';
@@ -231,6 +231,10 @@ function mountTitleParticles() {
     }
     ready = build();
     if (!ready) { release(); return; }
+    const builtRect = heading.getBoundingClientRect();
+    lastBuildWidth = builtRect.width;
+    lastBuildHeight = builtRect.height;
+    lastBuildTime = Date.now();
     canvas.dataset.particleCount = String(particles.length);
     // 页面没有开场动画，粒子构建完成即就地交接，立刻呈现最终状态。
     revealed = true;
@@ -238,15 +242,26 @@ function mountTitleParticles() {
     sync();
   }
 
+  // 字体交换或滚动条增减可能让标题尺寸连续微抖；若每次都重建粒子，
+  // 重建又会改变布局，形成 resize→rebuild→resize 的循环，低端设备上表现为卡死。
+  // 只有尺寸真正稳定后才重建，且两次重建至少间隔 300 毫秒。
+  let lastBuildWidth = 0, lastBuildHeight = 0, lastBuildTime = 0;
   function scheduleResize() {
     if (!ready) return;
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       if (!ready || !canvas) return;
+      const rect = heading.getBoundingClientRect();
+      const now = Date.now();
+      const stable = Math.abs(rect.width - lastBuildWidth) < 1 && Math.abs(rect.height - lastBuildHeight) < 1;
+      if (stable || now - lastBuildTime < 300) { scheduleResize(); return; }
       cancelAnimationFrame(frame);
       frame = 0;
       ready = build();
       if (ready) {
+        lastBuildWidth = rect.width;
+        lastBuildHeight = rect.height;
+        lastBuildTime = now;
         canvas.dataset.particleCount = String(particles.length);
         sync();
       }
