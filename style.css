@@ -7,7 +7,7 @@
 }
 @font-face {
   font-family: 'LexFlow Web Serif'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url('./fonts/LexFlowWebSerif-Regular-cjk.woff2?v=20260926s') format('woff2');
+  src: url('./fonts/LexFlowWebSerif-Regular-cjk.woff2?v=20260926t') format('woff2');
   unicode-range: U+2318, U+25A0-25FF, U+3000-3007, U+3012-3013, U+301C-301F, U+3020-303F, U+3400-4DBF, U+4E00-9FFF, U+FE30-FE4F;
 }
 @font-face {
@@ -17,7 +17,7 @@
 }
 @font-face {
   font-family: 'LexFlow Web Serif'; font-style: normal; font-weight: 600; font-display: swap;
-  src: url('./fonts/LexFlowWebSerif-SemiBold-cjk.woff2?v=20260926s') format('woff2');
+  src: url('./fonts/LexFlowWebSerif-SemiBold-cjk.woff2?v=20260926t') format('woff2');
   unicode-range: U+2318, U+25A0-25FF, U+3000-3007, U+3012-3013, U+301C-301F, U+3020-303F, U+3400-4DBF, U+4E00-9FFF, U+FE30-FE4F;
 }
 :root {
@@ -179,6 +179,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .flow-diagram { position: relative; display: flex; align-items: flex-start; padding: 20px 16px 80px; }
 .flow-node { flex: 1; min-width: 0; text-align: center; }
 .node-icon { display: inline-grid; place-items: center; width: 58px; height: 58px; background: #f1e9df; border: 1px solid #e7d9cb; border-radius: 15px; font-size: 25px; color: var(--accent); }
+.node-icon svg { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
 .flow-node h3 { font-size: 18px; font-weight: 400; margin: 20px 0 9px; }
 .flow-node p { font-size: 13px; color: var(--muted); margin: 0; }
 .connector { width: 12%; height: 1px; background: #d9cabb; position: relative; margin-top: 29px; flex-shrink: 0; }
