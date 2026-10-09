@@ -7,7 +7,7 @@
 }
 @font-face {
   font-family: 'LexFlow Web Serif'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url('./fonts/LexFlowWebSerif-Regular-cjk.woff2?v=20261005b') format('woff2');
+  src: url('./fonts/LexFlowWebSerif-Regular-cjk.woff2?v=20261009a') format('woff2');
   unicode-range: U+2318, U+2460-2463, U+25A0-25FF, U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+FE30-FE4F, U+FF01-FF5E, U+FFE0-FFE5;
 }
 @font-face {
@@ -17,7 +17,7 @@
 }
 @font-face {
   font-family: 'LexFlow Web Serif'; font-style: normal; font-weight: 600; font-display: swap;
-  src: url('./fonts/LexFlowWebSerif-SemiBold-cjk.woff2?v=20261005b') format('woff2');
+  src: url('./fonts/LexFlowWebSerif-SemiBold-cjk.woff2?v=20261009a') format('woff2');
   unicode-range: U+2318, U+2460-2463, U+25A0-25FF, U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+FE30-FE4F, U+FF01-FF5E, U+FFE0-FFE5;
 }
 :root {
@@ -272,7 +272,7 @@ dialog .dialog-lead { color: var(--muted); line-height: 1.85; margin: 0; }
 }
 @media (max-width: 800px) {
   .wrap { width: calc(100% - 48px); }.header { min-height: 78px; padding-left: 24px; padding-right: 24px; gap: 20px; }
-  .header nav { gap: 17px; font-size: 13px; }.header nav a:nth-child(2) { display: none; }
+  .header nav { gap: 17px; font-size: 13px; }
   .brand { font-size: 24px; }.brand img { width: 32px; height: 32px; }
   .button-small { padding: 11px 14px; gap: 10px; font-size: 12px; }
   .hero { padding-top: 36px; }.hero h1 { font-size: 46px; font-size: clamp(46px, 7.2vw, 62px); }
@@ -302,7 +302,6 @@ dialog .dialog-lead { color: var(--muted); line-height: 1.85; margin: 0; }
 }
 @media (max-width: 620px) {
   .wrap { width: calc(100% - 40px); }.header { justify-content: flex-start; gap: 18px; padding-left: 20px; padding-right: 20px; }.header nav { display: flex; flex: 1 1 auto; flex-wrap: wrap; gap: 11px; row-gap: 7px; justify-content: flex-start; font-size: 12px; }
-  .header nav a:nth-child(2) { display: inline; }
   .header .button { display: none; }.brand { font-size: 0; gap: 0; }
   .hero-stage { grid-template-columns: 1fr; gap: 0; margin-bottom: 20px; }
   .hero h1 { font-size: 56px; font-size: clamp(56px, 11vw, 76px); letter-spacing: -.055em; position: relative; z-index: 1; }
@@ -447,3 +446,53 @@ dialog .dialog-lead { color: var(--muted); line-height: 1.85; margin: 0; }
 
 /* 正文中的开源仓库链接与章节跳转链接需显示为可见链接，与站内其他链接一致。 */
 a[href^="https://github.com/"], .install a[href^="#"] { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+
+/* 顶部导航的下拉菜单：把首页的三个锚点位置收进「主页」一项，鼠标经过或键盘聚焦时展开。
+   用 CSS 悬停而非 details，是因为封闭状态下 details 的内容无法由样式强制显示。 */
+.nav-menu { position: relative; }
+.nav-menu > a { display: inline-flex; align-items: center; gap: 5px; }
+.nav-caret { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
+.nav-menu:hover .nav-caret, .nav-menu:focus-within .nav-caret { transform: rotate(180deg); }
+.nav-sub { position: absolute; left: -14px; top: 100%; z-index: 20; padding-top: 14px; display: none; }
+.nav-menu:hover .nav-sub, .nav-menu:focus-within .nav-sub { display: block; }
+.nav-sub a { display: block; white-space: nowrap; padding: 10px 18px; background: var(--paper); border: 1px solid var(--line); border-bottom: 0; font-size: 14px; color: #665e54; }
+.nav-sub a:first-child { border-radius: 12px 12px 0 0; }
+.nav-sub a:last-child { border-bottom: 1px solid var(--line); border-radius: 0 0 12px 12px; }
+.nav-sub a:hover { color: var(--accent); background: var(--soft); }
+
+/* 文章栏目。列表页沿用安装说明页的窄栏版式，正文另按中文长文调整行距。 */
+.article-index { border-top: 1px solid var(--line); margin-top: 38px; }
+.article-card { display: block; padding: 26px 0; border-bottom: 1px solid var(--line); }
+.article-card h2 { font-size: 21px; font-weight: 600; line-height: 1.5; margin: 0 0 9px; }
+.article-card p { color: var(--muted); font-size: 15px; line-height: 1.85; margin: 0 0 8px; }
+.article-card .article-meta { font-size: 12px; color: #9a9186; margin: 0; }
+.article-card:hover h2 { color: var(--accent); }
+
+.article-head { margin-bottom: 8px; }
+.article-head h1 { font-size: 34px; font-weight: 600; line-height: 1.5; margin: 0 0 16px; }
+.article-meta { color: var(--muted); font-size: 13px; line-height: 1.8; margin: 0; }
+.article-body { border-top: 1px solid var(--line); margin-top: 30px; padding-top: 34px; }
+.article-body h2 { font-size: 21px; font-weight: 600; line-height: 1.55; margin: 42px 0 16px; }
+.article-body h2:first-child { margin-top: 0; }
+.article-body p { font-size: 17px; line-height: 1.95; margin: 0 0 17px; text-align: justify; }
+.article-body strong { font-weight: 600; }
+.article-body em { font-style: normal; font-weight: 600; }
+.article-source { border-top: 1px solid var(--line); margin-top: 34px; padding-top: 22px; }
+.article-source p { margin: 0; font-size: 15px; }
+.article-note { color: var(--muted); font-size: 13px; line-height: 1.85; margin: 20px 0 0; }
+.article-source a { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+
+@media (max-width: 800px) {
+  .article-head h1 { font-size: 26px; }
+  .article-body p { font-size: 16px; line-height: 1.9; }
+  .article-body h2 { font-size: 19px; margin-top: 34px; }
+  .nav-sub { left: 0; }
+}
+@media (max-width: 620px) {
+  .nav-sub a { font-size: 12px; padding: 9px 14px; }
+}
+
+/* 文章列表与正文中的链接须显示为可见链接，与站内其他链接一致。 */
+.article-card, .install-back a, .article-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+.article-card { color: inherit; text-decoration: none; }
+.article-card .article-meta, .article-index a:hover { text-decoration: none; }
